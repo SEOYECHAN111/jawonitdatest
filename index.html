@@ -1,0 +1,680 @@
+<title>자원잇다</title>
+<style>
+:root{
+  /* colors sampled from the live 자원잇다.com logo + UI (teal-green -> blue-teal gradient brand) */
+  --bg:#F4FAF7; --panel:#FFFFFF; --ink:#26312D; --sub:#5B6B64; --line:#DCE8E2;
+  --green:#0F9F76; --green-ink:#0B7A5B; --copper:#1C88A6; --copper-soft:#DCF0EC;
+  --wordmark:#2A2A2A;
+  --s:#1F9D6B; --a:#4EAE6E; --b:#1C88A6; --c:#DDA22E; --d:#C8553D; --e:#8C2F26;
+  --shadow:0 10px 30px -14px rgba(15,159,118,.28);
+  --brand-grad:linear-gradient(135deg,#4FCE94 0%,#0F9F76 45%,#1C88A6 100%);
+  --brand-grad-soft:linear-gradient(135deg, color-mix(in srgb, #4FCE94 22%, transparent), color-mix(in srgb, #1C88A6 22%, transparent));
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1613; --panel:#182420; --ink:#EAF1ED; --sub:#A6B8B0; --line:#2A3833;
+    --green:#3FC79A; --green-ink:#DCEEE3; --copper:#4CB6D6; --copper-soft:#1E3A3C;
+    --wordmark:#EAF1ED;
+    --s:#3FC79A; --a:#6BCB7B; --b:#4CB6D6; --c:#EFC15C; --d:#E07A63; --e:#D9594C;
+    --brand-grad:linear-gradient(135deg,#5BE0AA 0%,#3FC79A 45%,#4CB6D6 100%);
+    --brand-grad-soft:linear-gradient(135deg, color-mix(in srgb, #5BE0AA 26%, transparent), color-mix(in srgb, #4CB6D6 26%, transparent));
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1613; --panel:#182420; --ink:#EAF1ED; --sub:#A6B8B0; --line:#2A3833;
+  --green:#3FC79A; --green-ink:#DCEEE3; --copper:#4CB6D6; --copper-soft:#1E3A3C;
+  --wordmark:#EAF1ED;
+  --s:#3FC79A; --a:#6BCB7B; --b:#4CB6D6; --c:#EFC15C; --d:#E07A63; --e:#D9594C;
+  --brand-grad:linear-gradient(135deg,#5BE0AA 0%,#3FC79A 45%,#4CB6D6 100%);
+  --brand-grad-soft:linear-gradient(135deg, color-mix(in srgb, #5BE0AA 26%, transparent), color-mix(in srgb, #4CB6D6 26%, transparent));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif;padding-inline:16px}
+h1,h2,h3,.disp{font-family:'Black Han Sans','Noto Sans KR',sans-serif;font-weight:400;text-wrap:balance}
+.wrap{max-width:520px;margin:0 auto}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-block:14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px}
+.brand img{height:28px;width:auto;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(15,159,118,.35))}
+.brand .name{font-family:'Black Han Sans',sans-serif;font-size:22px;color:var(--wordmark)}
+.mode-pill{font-size:11px;font-weight:800;color:#fff;background:var(--brand-grad);border-radius:999px;padding:5px 12px;white-space:nowrap;box-shadow:0 4px 14px -4px rgba(15,159,118,.55)}
+.steps{display:flex;gap:6px;padding-block:12px}
+.step{flex:1;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.step.on{background:var(--brand-grad)}
+main{padding-block:8px 40px}
+.screen{display:flex;flex-direction:column;gap:18px;animation:screenIn .38s cubic-bezier(.2,.8,.3,1)}
+@keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){.screen{animation:none}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.hero-card{position:relative;overflow:hidden}
+.hero-card::before{content:"";position:absolute;top:-70px;right:-70px;width:220px;height:220px;border-radius:50%;background:var(--brand-grad);opacity:.16;filter:blur(2px)}
+.hero-card::after{content:"";position:absolute;bottom:-90px;left:-60px;width:180px;height:180px;border-radius:50%;background:var(--brand-grad);opacity:.10;filter:blur(2px)}
+.hero-card>*{position:relative}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.04em;background:var(--brand-grad);-webkit-background-clip:text;background-clip:text;color:transparent;text-transform:uppercase}
+.title{font-size:26px;color:var(--ink);margin:4px 0 2px}
+.desc{font-size:14.5px;color:var(--sub);line-height:1.6}
+.upload-box{border:2px dashed var(--line);border-radius:18px;padding:32px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;cursor:pointer;transition:border-color .15s, background .15s}
+.upload-box:hover{border-color:var(--copper);background:var(--brand-grad-soft)}
+.upload-box .ico-badge{width:64px;height:64px;border-radius:20px;background:var(--brand-grad);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px -8px rgba(15,159,118,.55)}
+.upload-box .b1{font-weight:700;font-size:15.5px}
+.upload-box .b2{font-size:13px;color:var(--sub)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.btn{appearance:none;border:none;border-radius:12px;padding:13px 18px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s, filter .15s, box-shadow .15s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--brand-grad);color:#fff;flex:1;box-shadow:0 10px 22px -10px rgba(15,159,118,.6)}
+.btn-primary:hover{filter:brightness(1.06)}
+.btn-primary:disabled{opacity:.45;box-shadow:none}
+.btn-ghost{background:transparent;color:var(--green-ink);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--green)}
+.btn-copper{background:var(--brand-grad);color:#fff}
+.preview-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;border:1px solid var(--line);background:#0002}
+.spinner{width:42px;height:42px;border-radius:50%;padding:4px;background:var(--brand-grad);animation:spin 1s linear infinite;-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px))}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loadwrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:44px 10px;text-align:center}
+.loadwrap .b1{font-weight:700;font-size:15px}
+.loadwrap .b2{font-size:13px;color:var(--sub);max-width:280px;line-height:1.6}
+.candlist{display:flex;flex-direction:column;gap:8px}
+.cand{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;background:var(--panel)}
+.cand.sel{border-color:var(--copper);background:color-mix(in srgb, var(--copper) 8%, var(--panel))}
+.cand .ico{width:38px;height:38px;border-radius:10px;background:var(--copper-soft);color:var(--copper);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cand .name{font-weight:700;font-size:15px}
+.cand .conf{font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums}
+.cand .bar{height:5px;border-radius:3px;background:var(--line);margin-top:5px;overflow:hidden}
+.cand .bar i{display:block;height:100%;background:var(--copper)}
+.cand .meta{flex:1;min-width:0}
+.warnbox{display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb, var(--c) 14%, var(--panel));border:1px solid var(--c);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.6;color:var(--ink)}
+.warnbox svg{flex-shrink:0;color:var(--c);margin-top:1px}
+.catgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.catbtn{display:flex;flex-direction:column;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:14px;padding:12px 6px;background:var(--panel);cursor:pointer;font-size:12.5px;font-weight:700;text-align:center}
+.catbtn.sel{border-color:var(--green);background:color-mix(in srgb, var(--green) 10%, var(--panel))}
+.catbtn .ico{width:32px;height:32px;border-radius:9px;background:var(--copper-soft);color:var(--copper);display:flex;align-items:center;justify-content:center}
+.qgroup{display:flex;flex-direction:column;gap:10px}
+.qlabel{font-weight:700;font-size:14.5px}
+.optrow{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:1.5px solid var(--line);border-radius:999px;padding:9px 16px;font-size:13.5px;font-weight:600;background:var(--panel);cursor:pointer;color:var(--ink);transition:transform .1s}
+.opt.sel{background:var(--brand-grad);border-color:transparent;color:#fff;box-shadow:0 6px 16px -6px rgba(15,159,118,.5)}
+.gradebadge{display:flex;align-items:center;gap:16px}
+.gradebadge .ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Black Han Sans',sans-serif;font-size:40px;color:#fff;flex-shrink:0;animation:ringPop .5s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes ringPop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){.gradebadge .ring{animation:none}}
+.gradebadge .gtext{flex:1}
+.gradebadge .glabel{font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.04em}
+.gradebadge .gdesc{font-size:15px;font-weight:700;margin-top:2px}
+.routecard{display:flex;gap:12px;align-items:center;background:var(--brand-grad-soft);border:1px solid color-mix(in srgb, var(--green) 30%, var(--line));border-radius:14px;padding:14px}
+.routecard .ico{width:42px;height:42px;border-radius:11px;background:var(--brand-grad);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 18px -6px rgba(15,159,118,.5)}
+.routecard .t1{font-size:12px;color:var(--sub);font-weight:700}
+.routecard .t2{font-size:16.5px;font-weight:700}
+table.res{width:100%;border-collapse:collapse;font-size:13.5px}
+table.res th{text-align:left;font-size:11.5px;color:var(--sub);font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--line)}
+table.res td{padding:9px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+table.res tr:last-child td{border-bottom:none}
+.tierpill{display:inline-flex;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px}
+.tier-high{background:color-mix(in srgb, var(--s) 18%, var(--panel));color:var(--s)}
+.tier-mid{background:color-mix(in srgb, var(--c) 20%, var(--panel));color:var(--c)}
+.tier-low{background:color-mix(in srgb, var(--sub) 16%, var(--panel));color:var(--sub)}
+.srcnote{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:10px;margin-top:6px}
+.srcnote svg{flex-shrink:0;margin-top:1px}
+.checklist{display:flex;flex-direction:column;gap:8px}
+.checkitem{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.55;cursor:pointer}
+.checkitem input{margin-top:3px;width:17px;height:17px;accent-color:var(--green);flex-shrink:0}
+.checkitem.done .txt{color:var(--sub);text-decoration:line-through}
+.qrbox{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.qrbox canvas,.qrbox img{border-radius:10px;background:#fff;padding:8px}
+.disc{font-size:11.5px;color:var(--sub);text-align:center;line-height:1.7;padding-block:6px 2px}
+.footer-actions{display:flex;gap:10px}
+.copy-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--bg);font-size:13px;font-weight:700;padding:10px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;z-index:50}
+.copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.limit-toggle{font-size:12.5px;color:var(--sub);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
+.limit-body{font-size:12.5px;color:var(--sub);line-height:1.7;padding-top:8px}
+.chiprow{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--sub)}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <img src="assets/logo-icon.png" alt="자원잇다 로고">
+      <span class="name">자원잇다</span>
+    </div>
+    <span class="mode-pill" id="modePill">부스 체험 모드</span>
+  </div>
+  <div class="steps" aria-hidden="true">
+    <div class="step" data-i="0"></div><div class="step" data-i="1"></div><div class="step" data-i="2"></div><div class="step" data-i="3"></div>
+  </div>
+
+  <main>
+    <!-- SCREEN 0: capture -->
+    <section class="screen" id="scr-capture">
+      <div class="card hero-card">
+        <div class="eyebrow">Step 1 · 사진 한 장</div>
+        <h1 class="title">버리려던 그 기기,<br>사진부터 찍어볼까요?</h1>
+        <p class="desc">스마트폰·노트북·폐기판 등 무엇이든 좋아요. 인식은 이 화면(브라우저) 안에서 바로 이루어지고, 사진은 어디로도 전송되지 않아요.</p>
+      </div>
+      <div class="card">
+        <label class="upload-box" id="uploadBox" for="fileInput">
+          <div class="ico-badge"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16l4.6-6a2 2 0 0 1 3.2.1L16 16"></path><circle cx="9" cy="9" r="1.6"></circle><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"></rect></svg></div>
+          <span class="b1">사진 촬영 또는 업로드</span>
+          <span class="b2">탭해서 카메라를 열거나 앨범에서 선택하세요</span>
+        </label>
+        <input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
+      </div>
+    </section>
+
+    <!-- SCREEN 1: recognizing -->
+    <section class="screen" id="scr-loading" hidden>
+      <div class="card">
+        <img class="preview-img" id="previewImg" alt="업로드한 사진">
+      </div>
+      <div class="card loadwrap">
+        <div class="spinner"></div>
+        <div class="b1" id="loadTitle">모델을 불러오는 중...</div>
+        <div class="b2" id="loadSub">처음 한 번만 시간이 걸려요. 브라우저 안에서 직접 계산하고 있어요.</div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: candidates -->
+    <section class="screen" id="scr-candidates" hidden>
+      <div class="card">
+        <img class="preview-img" id="previewImg2" alt="업로드한 사진">
+      </div>
+      <div class="card" id="candCard">
+        <div class="eyebrow">Step 2 · 지타(JITA) 품목 인식</div>
+        <h2 class="title" style="font-size:21px;margin-bottom:10px">AI가 이렇게 봤어요</h2>
+        <div class="candlist" id="candList"></div>
+      </div>
+      <div class="card" id="fallbackCard" hidden>
+        <div class="eyebrow">직접 선택</div>
+        <h2 class="title" style="font-size:19px;margin:4px 0 10px">AI가 명확히 인식하지 못했어요</h2>
+        <p class="desc" style="margin-bottom:12px">일반 이미지 인식 모델이라 폐기판처럼 세부 품목은 놓칠 수 있어요. 아래에서 직접 골라주세요.</p>
+        <div class="catgrid" id="catGrid"></div>
+      </div>
+      <div class="btnrow">
+        <button class="btn btn-ghost" id="btnManual">직접 고를게요</button>
+        <button class="btn btn-primary" id="btnToCondition" disabled>다음</button>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: condition -->
+    <section class="screen" id="scr-condition" hidden>
+      <div class="card">
+        <div class="eyebrow">Step 3 · 상태 확인</div>
+        <h2 class="title" style="font-size:21px;margin-bottom:4px">지금 상태를 알려주세요</h2>
+        <p class="desc">사진만으로는 작동 여부까지 알 수 없어요. 세 가지만 체크하면 등급을 계산해요.</p>
+      </div>
+      <div class="card qgroup" id="qGroup"></div>
+      <div class="btnrow">
+        <button class="btn btn-ghost" id="btnBackCand">이전</button>
+        <button class="btn btn-primary" id="btnToResult" disabled>결과 보기</button>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: result -->
+    <section class="screen" id="scr-result" hidden>
+      <div class="card hero-card" id="gradeCard">
+        <div class="eyebrow" id="resultCatLabel">품목</div>
+        <div class="gradebadge" style="margin-top:8px">
+          <div class="ring" id="gradeRing">B</div>
+          <div class="gtext">
+            <div class="glabel">RGM 자원가치 등급</div>
+            <div class="gdesc" id="gradeDesc">수리하면 재판매 가능</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">추천 처리 경로</div>
+        <div class="routecard" style="margin-top:10px">
+          <div class="ico" id="routeIco"></div>
+          <div>
+            <div class="t1">가장 먼저 시도해볼 경로</div>
+            <div class="t2" id="routeText">중고거래 재판매</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">품고 있는 자원</div>
+        <div id="resourceBody" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">개인정보 삭제 체크리스트</div>
+        <div class="checklist" id="privacyList" style="margin-top:10px"></div>
+      </div>
+      <div class="card qrbox" id="qrCard">
+        <div class="eyebrow">체험 공유</div>
+        <div id="qrHolder"></div>
+        <div class="desc" style="margin:0">이 QR로 다른 사람도 자원잇다를 바로 체험할 수 있어요</div>
+      </div>
+      <div class="footer-actions">
+        <button class="btn btn-ghost" id="btnRestart" style="flex:1">다시 체험하기</button>
+      </div>
+      <button class="limit-toggle" id="limitToggle">이 결과, 어디까지 믿어도 될까요? ▾</button>
+      <div class="limit-body" id="limitBody" hidden></div>
+    </section>
+  </main>
+</div>
+<div class="copy-toast" id="toast">복사했어요</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ---------- category data ---------- */
+// content sources:
+//  - phone: EPA (1M phones -> 75lb gold/772lb silver/35000lb copper/33lb palladium) converted per-unit
+//  - other categories: no per-device public figure found -> shown as tier badge only (honest limitation)
+//  - pcb: EPA qualitative multiplier vs ore, no per-gram figure invented
+const ICONS = {
+  smartphone: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.2"></rect><line x1="11" y1="18.3" x2="13" y2="18.3"></line></svg>',
+  laptop: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="11" rx="1.4"></rect><path d="M2 19.5h20l-1.6-3H3.6z"></path></svg>',
+  tablet: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="16" height="19" rx="2"></rect><line x1="11" y1="18.3" x2="13" y2="18.3"></line></svg>',
+  desktop: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"></rect><line x1="8" y1="20" x2="16" y2="20"></line><line x1="12" y1="16" x2="12" y2="20"></line></svg>',
+  peripheral: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"></rect><line x1="6.5" y1="10" x2="6.5" y2="10"></line><line x1="10" y1="10" x2="10" y2="10"></line><line x1="13.5" y1="10" x2="13.5" y2="10"></line><line x1="17" y1="10" x2="17" y2="10"></line></svg>',
+  pcb: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1.5"></rect><circle cx="8" cy="8" r="1.4"></circle><circle cx="16" cy="16" r="1.4"></circle><path d="M8 9.4V15a1.6 1.6 0 0 0 1.6 1.6H14M16 14.6V9a1.6 1.6 0 0 0-1.6-1.6H10"></path></svg>',
+  small_appliance: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"></rect><line x1="9" y1="7" x2="15" y2="7"></line><circle cx="12" cy="14.5" r="3"></circle></svg>',
+  camera: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 8z"></path><circle cx="12" cy="14" r="3.4"></circle></svg>',
+  cable: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v4a4 4 0 0 0 4 4h4a4 4 0 0 1 4 4v4"></path><circle cx="6" cy="4" r="1.6"></circle><circle cx="18" cy="20" r="1.6"></circle></svg>',
+  battery: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8" width="17" height="8" rx="1.6"></rect><line x1="21.5" y1="11" x2="21.5" y2="13"></line><line x1="6" y1="11" x2="6" y2="13"></line></svg>',
+  other: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16.5v.1M9.6 9.3a2.4 2.4 0 1 1 3.7 2c-1 .7-1.3 1.1-1.3 2.2"></path></svg>'
+};
+
+const CATS = [
+  {id:'smartphone', label:'스마트폰', tier:'high', hasData:true, storage:true},
+  {id:'laptop', label:'노트북', tier:'high', hasData:false, storage:true},
+  {id:'tablet', label:'태블릿', tier:'mid', hasData:false, storage:true},
+  {id:'desktop', label:'데스크탑 PC', tier:'mid', hasData:false, storage:true},
+  {id:'peripheral', label:'키보드·마우스', tier:'low', hasData:false, storage:false},
+  {id:'pcb', label:'폐기판(회로기판)', tier:'high', hasData:'pcb', storage:false},
+  {id:'small_appliance', label:'소형가전', tier:'low', hasData:false, storage:false},
+  {id:'camera', label:'카메라', tier:'mid', hasData:false, storage:true},
+  {id:'cable', label:'케이블·충전기', tier:'low', hasData:false, storage:false},
+  {id:'battery', label:'배터리', tier:'na', hasData:false, storage:false},
+  {id:'other', label:'기타 전자기기', tier:'low', hasData:false, storage:false},
+];
+const CAT = Object.fromEntries(CATS.map(c=>[c.id,c]));
+
+// ImageNet(MobileNet) label keyword -> category id
+const KEYMAP = [
+  [/cellular|cellphone|iPod/i,'smartphone'],
+  [/laptop|notebook/i,'laptop'],
+  [/desktop computer|screen|monitor/i,'desktop'],
+  [/computer keyboard|mouse, computer mouse|joystick/i,'peripheral'],
+  [/modem|hard disc|cassette|tape player|CD player|printer|photocopier|radio(?!\s?graph)/i,'other'],
+  [/remote control|digital watch|calculator/i,'small_appliance'],
+  [/reflex camera|Polaroid camera|camera/i,'camera'],
+  [/space heater|hair dryer|electric fan|toaster|washer|dishwasher|microwave/i,'small_appliance'],
+];
+
+const PHONE_G = {gold:0.034, silver:0.35, copper:15.9, palladium:0.015};
+
+// Real items on physical display at the booth. Photographed and confirmed by the club, not invented.
+const BOOTH_ITEMS = {
+  phone: {
+    img: 'assets/phone.jpg',
+    category: 'smartphone',
+    label: '삼성 애니콜 폴더폰 (2000년대 중반)',
+    cond: {work:'dead', look:'worn', age:'old'},
+    note: '접이식 피처폰. 전원이 켜지지 않아 "작동 안 함"으로 판정했어요.'
+  },
+  pcb: {
+    img: 'assets/pcb.jpg',
+    category: 'pcb',
+    label: '대형가전 전원보드 (정확한 기종 미상)',
+    cond: {work:'dead', look:'worn', age:'old'},
+    note: 'TV·모니터급 전원보드로 추정되지만, 어떤 기기에서 나왔는지는 정확히 확인되지 않았어요.'
+  }
+};
+
+/* ---------- state ---------- */
+const state = { file:null, dataUrl:null, preds:null, category:null, cond:{work:null, look:null, age:null}, booth:null };
+let model = null, modelLoading = false;
+
+/* ---------- helpers ---------- */
+const $ = (id)=>document.getElementById(id);
+function show(id){ ['scr-capture','scr-loading','scr-candidates','scr-condition','scr-result'].forEach(s=>{ $(s).hidden = (s!==id); }); }
+function setSteps(n){ document.querySelectorAll('.step').forEach((el,i)=>el.classList.toggle('on', i<n)); }
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); }
+
+/* ---------- flow: capture ---------- */
+$('uploadBox').addEventListener('click', ()=>{}); // label+for handles it
+$('fileInput').addEventListener('change', (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  state.file = f;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    state.dataUrl = ev.target.result;
+    $('previewImg').src = state.dataUrl;
+    $('previewImg2').src = state.dataUrl;
+    startRecognition();
+  };
+  reader.readAsDataURL(f);
+});
+
+async function startRecognition(){
+  show('scr-loading'); setSteps(1);
+  try{
+    if(!model){
+      modelLoading = true;
+      $('loadTitle').textContent = '인식 모델을 불러오는 중...';
+      model = await mobilenet.load({version:2, alpha:1.0});
+      modelLoading = false;
+    }
+    $('loadTitle').textContent = '사진을 분석하는 중...';
+    $('loadSub').textContent = '지타(JITA)가 품목 후보를 찾고 있어요.';
+    const img = new Image();
+    img.src = state.dataUrl;
+    await new Promise(res=>{ img.onload = res; });
+    const preds = await model.classify(img, 8);
+    state.preds = preds;
+    renderCandidates(preds);
+  }catch(err){
+    console.error(err);
+    $('loadTitle').textContent = '모델을 불러오지 못했어요';
+    $('loadSub').textContent = '네트워크가 없어 처음 모델을 받지 못한 것 같아요. 아래에서 직접 품목을 골라주세요.';
+    setTimeout(()=>{ state.preds = []; renderCandidates([]); }, 900);
+  }
+}
+
+/* ---------- candidates ---------- */
+function mapPred(pred){
+  for(const [re,cat] of KEYMAP){ if(re.test(pred.className)) return cat; }
+  return null;
+}
+function renderCandidates(preds){
+  show('scr-candidates'); setSteps(2);
+  const mapped = [];
+  const seen = new Set();
+  for(const p of preds){
+    const cat = mapPred(p);
+    if(cat && !seen.has(cat)){ seen.add(cat); mapped.push({cat, prob:p.probability}); }
+  }
+  const list = $('candList');
+  const fallback = $('fallbackCard');
+  const candCard = $('candCard');
+  list.innerHTML = '';
+  state.category = null;
+  $('btnToCondition').disabled = true;
+
+  if(mapped.length === 0 || mapped[0].prob < 0.12){
+    candCard.hidden = true;
+    fallback.hidden = false;
+    buildCatGrid();
+    return;
+  }
+  candCard.hidden = false;
+  fallback.hidden = true;
+  mapped.slice(0,4).forEach((m,i)=>{
+    const c = CAT[m.cat];
+    const el = document.createElement('div');
+    el.className = 'cand';
+    el.innerHTML = `<div class="ico">${ICONS[c.id]}</div>
+      <div class="meta"><div class="name">${c.label}</div>
+        <div class="conf">AI 신뢰도 ${(m.prob*100).toFixed(0)}%</div>
+        <div class="bar"><i style="width:${Math.min(100,m.prob*100)}%"></i></div>
+      </div>`;
+    el.addEventListener('click', ()=>{
+      document.querySelectorAll('.cand').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel');
+      state.category = c.id;
+      $('btnToCondition').disabled = false;
+    });
+    if(i===0){ el.classList.add('sel'); state.category = c.id; $('btnToCondition').disabled = false; }
+    list.appendChild(el);
+  });
+}
+function buildCatGrid(){
+  const grid = $('catGrid');
+  grid.innerHTML = '';
+  CATS.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'catbtn';
+    el.innerHTML = `<div class="ico">${ICONS[c.id]}</div><span>${c.label}</span>`;
+    el.addEventListener('click', ()=>{
+      document.querySelectorAll('.catbtn').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel');
+      state.category = c.id;
+      $('btnToCondition').disabled = false;
+    });
+    grid.appendChild(el);
+  });
+}
+$('btnManual').addEventListener('click', ()=>{
+  $('candCard').hidden = true;
+  $('fallbackCard').hidden = false;
+  buildCatGrid();
+});
+$('btnToCondition').addEventListener('click', ()=>{ buildConditionScreen(); show('scr-condition'); setSteps(3); });
+
+/* ---------- condition ---------- */
+const QUESTIONS = [
+  {key:'work', label:'작동 여부', opts:[['ok','정상 작동'],['partial','부분 작동'],['dead','작동 안 함']]},
+  {key:'look', label:'외관·화면 상태', opts:[['good','양호'],['worn','사용감 있음'],['broken','파손']]},
+  {key:'age', label:'사용 연식', opts:[['new','2년 이내'],['mid','2~5년'],['old','5년 이상']]},
+];
+function buildConditionScreen(){
+  const g = $('qGroup');
+  g.innerHTML = '';
+  state.cond = {work:null, look:null, age:null};
+  QUESTIONS.forEach(q=>{
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<div class="qlabel">${q.label}</div>`;
+    const row = document.createElement('div');
+    row.className = 'optrow';
+    q.opts.forEach(([val,txt])=>{
+      const b = document.createElement('button');
+      b.className = 'opt'; b.type='button'; b.textContent = txt;
+      b.addEventListener('click', ()=>{
+        row.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+        b.classList.add('sel');
+        state.cond[q.key] = val;
+        $('btnToResult').disabled = !(state.cond.work && state.cond.look && state.cond.age);
+      });
+      row.appendChild(b);
+    });
+    wrap.appendChild(row);
+    g.appendChild(wrap);
+  });
+}
+$('btnBackCand').addEventListener('click', ()=>{ show('scr-candidates'); setSteps(2); });
+$('btnToResult').addEventListener('click', ()=>{ computeResult(); show('scr-result'); setSteps(4); });
+
+/* ---------- RGM scoring ---------- */
+const TIER_SCORE = {high:4, mid:2.5, low:1, na:0};
+function scoreResale(){
+  const {work,look} = state.cond;
+  if(work==='dead' || look==='broken') return 0;
+  if(work==='ok' && look==='good') return 4;
+  if(work==='ok') return 3;
+  if(work==='partial' && look==='good') return 2;
+  return 1;
+}
+function scoreRepair(){
+  const {work} = state.cond;
+  if(work==='partial') return 4;
+  if(work==='dead') return 2;
+  return 1;
+}
+function computeResult(){
+  const cat = CAT[state.category];
+  const resale = scoreResale();
+  const repair = scoreRepair();
+  const partVal = TIER_SCORE[cat.tier];
+  const matVal = TIER_SCORE[cat.tier];
+  const total = resale + repair + partVal + matVal; // 0-16
+  const pct = total/16;
+  let grade, gcolor, gdesc, route, routeText;
+  if(cat.id==='battery'){
+    grade='—'; gcolor='var(--e)'; gdesc='배터리는 등급 대신 안전 배출이 우선이에요';
+    route='hazard'; routeText='전문 폐배터리 수거함으로 (일반 쓰레기 금지)';
+  } else if(cat.id==='pcb'){
+    grade='—'; gcolor='var(--b)'; gdesc='완제품이 아닌 분리된 기판이라 재판매 등급 대신 소재가치로 안내해요';
+    route='material'; routeText='전문업체 부품·소재 회수';
+  } else if(pct>=0.85){ grade='S'; gcolor='var(--s)'; gdesc='바로 중고거래 가능한 최상급'; route='resale'; routeText='중고거래 재판매'; }
+  else if(pct>=0.65){ grade='A'; gcolor='var(--a)'; gdesc='재판매하기 좋은 상태'; route='resale'; routeText='중고거래 재판매'; }
+  else if(pct>=0.45){ grade='B'; gcolor='var(--b)'; gdesc='손보면 다시 쓸 수 있어요'; route='repair'; routeText='수리 후 재판매 검토'; }
+  else if(pct>=0.25){ grade='C'; gcolor='var(--c)'; gdesc='부품으로는 쓸모 있어요'; route='parts'; routeText='부품 회수 우선 검토'; }
+  else if(pct>=0.10){ grade='D'; gcolor='var(--d)'; gdesc='원자재로 돌려보내는 게 나아요'; route='material'; routeText='전문업체 소재회수'; }
+  else { grade='E'; gcolor='var(--e)'; gdesc='안전하게 폐기가 우선이에요'; route='dispose'; routeText='전문업체 안전 폐기'; }
+
+  $('resultCatLabel').textContent = cat.label + ' · 지타(JITA) 인식 결과';
+  const ring = $('gradeRing');
+  ring.textContent = grade;
+  ring.style.background = gcolor;
+  ring.style.boxShadow = `0 12px 26px -8px color-mix(in srgb, ${gcolor} 65%, transparent)`;
+  ring.classList.remove('ring'); void ring.offsetWidth; ring.classList.add('ring'); // restart pop animation
+  $('gradeDesc').textContent = gdesc;
+  const routeIcons = {
+    resale:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18M6 10V6.6a2.6 2.6 0 0 1 2.6-2.6h6.8A2.6 2.6 0 0 1 18 6.6V10"></path><rect x="3" y="10" width="18" height="10" rx="2"></rect></svg>',
+    repair:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 1-5.3 5.3L4 17v3h3l5.4-5.4a4 4 0 0 1 5.3-5.3l-2.3 2.3-2-2z"></path></svg>',
+    parts:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V20a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.5V4a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.5 1H20a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1z"></path></svg>',
+    material:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3 3 9l4 3M17 3l4 6-4 3M3 9h13a4 4 0 0 1 4 4v3M21 21l-4-6-4 3"></path></svg>',
+    dispose:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v5c0 5 3.8 8.7 9 11 5.2-2.3 9-6 9-11V6z"></path></svg>',
+    hazard:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>'
+  };
+  $('routeIco').innerHTML = routeIcons[route] || routeIcons.material;
+  $('routeText').textContent = routeText;
+
+  renderResource(cat);
+  renderPrivacy(cat);
+  renderQr();
+}
+
+function renderResource(cat){
+  const body = $('resourceBody');
+  if(cat.id==='smartphone'){
+    body.innerHTML = `
+      <table class="res">
+        <tr><th>자원</th><th>평균 추정량</th></tr>
+        <tr><td>금</td><td>${PHONE_G.gold} g</td></tr>
+        <tr><td>은</td><td>${PHONE_G.silver} g</td></tr>
+        <tr><td>구리</td><td>${PHONE_G.copper} g</td></tr>
+        <tr><td>팔라듐</td><td>${PHONE_G.palladium} g</td></tr>
+      </table>
+      <div class="srcnote">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="13"></line><line x1="12" y1="16.5" x2="12" y2="16.5"></line></svg>
+        <span>미국 EPA의 "휴대폰 100만 대에서 금 75파운드·은 772파운드·구리 35,000파운드·팔라듐 33파운드 회수 가능" 통계를 1대 기준으로 환산. 개별 기기 실측값이 아닌 평균 추정치예요.</span>
+      </div>`;
+  } else if(cat.id==='pcb'){
+    body.innerHTML = `
+      <div class="warnbox" style="background:color-mix(in srgb, var(--copper) 10%, var(--panel));border-color:var(--copper)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 21h20z"></path><line x1="12" y1="9" x2="12" y2="14"></line><line x1="12" y1="17" x2="12" y2="17"></line></svg>
+        <span>EPA 통계에 따르면 회로기판 1톤에는 같은 무게의 광석보다 금이 40~800배, 구리가 30~40배 더 농축돼 있어요. 기기별 정확한 그램 수는 부품 구성에 따라 크게 달라 향후 GIST 자문을 통해 보완할 예정이에요.</span>
+      </div>
+      <div class="tierpill tier-high" style="margin-top:10px">부품 가치: 높음</div>`;
+  } else if(cat.id==='battery'){
+    body.innerHTML = `<div class="warnbox">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 21h20z"></path><line x1="12" y1="9" x2="12" y2="14"></line><line x1="12" y1="17" x2="12" y2="17"></line></svg>
+        <span>배터리는 손상 시 화재 위험이 있어 일반 쓰레기로 버리면 안 돼요. 자원가치 계산 대신 안전 배출 경로만 안내해요.</span></div>`;
+  } else {
+    const tierLabel = {high:'높음', mid:'중간', low:'낮음'}[cat.tier] || '-';
+    const tierClass = {high:'tier-high', mid:'tier-mid', low:'tier-low'}[cat.tier] || 'tier-low';
+    body.innerHTML = `
+      <div class="tierpill ${tierClass}">부품·원자재 가치: ${tierLabel}</div>
+      <div class="srcnote" style="margin-top:10px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="13"></line><line x1="12" y1="16.5" x2="12" y2="16.5"></line></svg>
+        <span>이 품목은 공개된 대당 자원함량 통계를 아직 찾지 못해 그램 수치 대신 상대 등급으로만 보여줘요. 정밀 추정은 향후계획의 GIST 자문 단계에서 보완할 예정이에요.</span>
+      </div>`;
+  }
+}
+
+function renderPrivacy(cat){
+  const list = $('privacyList');
+  list.innerHTML = '';
+  const items = cat.storage
+    ? ['사진·연락처 등 중요 자료 백업', '모든 계정 로그아웃 (구글·애플·삼성 계정 등)', '유심(SIM)·외장 메모리 분리', '공장 초기화(완전 삭제) 실행']
+    : ['보안 걱정 없는 품목이에요. 바로 처리경로를 따라가도 괜찮아요.'];
+  items.forEach(t=>{
+    const el = document.createElement('label');
+    el.className = 'checkitem';
+    el.innerHTML = `<input type="checkbox"><span class="txt">${t}</span>`;
+    const cb = el.querySelector('input');
+    if(!cat.storage) cb.disabled = true;
+    cb.addEventListener('change', ()=> el.classList.toggle('done', cb.checked));
+    list.appendChild(el);
+  });
+}
+
+function renderQr(){
+  const holder = $('qrHolder');
+  holder.innerHTML = '';
+  const base = location.href.split('#')[0];
+  const target = state.booth ? (base + '#' + state.booth) : base;
+  try{
+    new QRCode(holder, { text: target, width:132, height:132, colorDark:'#173F31', colorLight:'#ffffff' });
+  }catch(e){ holder.textContent = target; }
+}
+
+/* ---------- booth card mode (fixed real items, reached via #phone / #pcb) ---------- */
+function renderBoothCard(key){
+  const item = BOOTH_ITEMS[key];
+  if(!item) return false;
+  state.booth = key;
+  state.category = item.category;
+  state.cond = item.cond;
+  show('scr-result'); setSteps(4);
+  $('modePill').textContent = '부스 전시 카드';
+  $('qGroup'); // no-op guard
+  computeResult();
+  $('resultCatLabel').textContent = item.label + ' · 실물 전시';
+  // swap the share block to explain this is a fixed exhibit card, not a live scan
+  const qrCard = $('qrCard');
+  qrCard.querySelector('.eyebrow').textContent = '이 QR로 실물 감정 결과 다시 보기';
+  qrCard.querySelector('.desc').textContent = item.note;
+  // inject the real photo above the grade card
+  let photoWrap = document.getElementById('boothPhotoCard');
+  if(!photoWrap){
+    photoWrap = document.createElement('div');
+    photoWrap.className = 'card';
+    photoWrap.id = 'boothPhotoCard';
+    const img = document.createElement('img');
+    img.className = 'preview-img';
+    img.alt = item.label;
+    photoWrap.appendChild(img);
+    $('gradeCard').before(photoWrap);
+  }
+  photoWrap.querySelector('img').src = item.img;
+  $('btnRestart').textContent = '나도 직접 촬영해볼게요';
+  return true;
+}
+
+function checkHashRoute(){
+  const h = location.hash.replace('#','');
+  if(BOOTH_ITEMS[h]) return renderBoothCard(h);
+  return false;
+}
+window.addEventListener('hashchange', checkHashRoute);
+
+/* ---------- misc ---------- */
+$('btnRestart').addEventListener('click', ()=>{
+  state.file=null; state.dataUrl=null; state.preds=null; state.category=null; state.booth=null;
+  $('fileInput').value = '';
+  $('modePill').textContent = '부스 체험 모드';
+  $('btnRestart').textContent = '다시 체험하기';
+  const photoWrap = document.getElementById('boothPhotoCard');
+  if(photoWrap) photoWrap.remove();
+  if(location.hash) history.replaceState(null,'',location.pathname+location.search);
+  show('scr-capture'); setSteps(0);
+});
+$('limitToggle').addEventListener('click', ()=>{
+  const b = $('limitBody');
+  const open = b.hidden;
+  b.hidden = !open;
+  $('limitToggle').textContent = '이 결과, 어디까지 믿어도 될까요? ' + (open?'▴':'▾');
+  if(open){
+    b.innerHTML = `이 결과는 다음을 참고해 해석해주세요.<br>
+    · 품목 인식은 범용 이미지 인식 모델(MobileNet) 기반이라 폐기판처럼 세부 품목은 놓칠 수 있어요.<br>
+    · 자원함량은 스마트폰만 공개 통계(EPA) 기반 평균 추정치이고, 나머지 품목은 상대 등급으로만 보여줘요.<br>
+    · RGM 등급은 사용자가 입력한 상태 체크를 함께 반영한 규칙 기반 계산이에요, 전문가 감정을 대체하지 않아요.<br>
+    · 사진은 서버로 전송되지 않고 이 브라우저 안에서만 처리돼요.`;
+  }
+});
+
+if(!checkHashRoute()){ show('scr-capture'); setSteps(0); }
+})();
+</script>
